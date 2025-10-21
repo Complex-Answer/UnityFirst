@@ -17,6 +17,11 @@ public class WeaponFire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(GameManger.Instance.IsPlaying == false)
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             FireBullet();

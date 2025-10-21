@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _setTakeDamage = 3f; //최대 충돌 횟수
     [SerializeField] private float _moveSpeed;
     [SerializeField] private GameObject _obj;
+    [SerializeField] private float _damage;
     private float _takeDamage;
     Rigidbody _rigidbody;
     Collider _collider;
@@ -31,23 +32,27 @@ public class Enemy : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         
-        if(collision.gameObject.tag == "Player") //만약 플레이어와 충돌 할 시
-        {
-            gameObject.SetActive(false);
-            Debug.Log("플레이어랑 충돌");
-        }
-        if(collision.gameObject.layer == 11)
-        {
-            gameObject.SetActive(false);
-            Debug.Log("일정거리 이상 넘어가서 사라짐");
-        }
+      
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "Player") //만약 플레이어와 충돌 할 시
+        {
+            Player player = other.GetComponent<Player>();
+            player.OnTakeDamage(_damage);
+            gameObject.SetActive(false);
+            Debug.Log("플레이어랑 충돌");
+        }
         if (other.gameObject.tag == "PlayerBullet") //만약 불릿이랑 충돌 할 시
         {
             TakeDamage();
             Debug.Log("대미지 입음! 남은 체력: " + _takeDamage);
+        }
+
+        if (other.gameObject.layer == 11)
+        {
+            gameObject.SetActive(false);
+            Debug.Log("일정거리 이상 넘어가서 사라짐");
         }
     }
 
@@ -63,6 +68,7 @@ public class Enemy : MonoBehaviour
         _takeDamage--;
         if (_takeDamage <= 0)
         {
+            _takeDamage = 0;
             gameObject.SetActive(false);
         }
     }

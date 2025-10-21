@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent (typeof(InputComp))]
+[RequireComponent(typeof(InputComp))]
 public class MoveComp : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 20;
@@ -16,6 +16,11 @@ public class MoveComp : MonoBehaviour
     private Vector3 _playerExtents;
     private void Start()
     {
+        MoveComponent();
+    }
+
+    private void MoveComponent()
+    {
         _inputComponent = GetComponent<InputComp>();
         SphereCollider playerColider = GetComponent<SphereCollider>();
 
@@ -25,7 +30,7 @@ public class MoveComp : MonoBehaviour
             _playerExtents = playerColider.bounds.extents;
         }
 
-        if(_movingPlane != null)
+        if (_movingPlane != null)
         {
             Bounds planeBounds = _movingPlane.GetComponent<MeshRenderer>().bounds;
 
@@ -39,7 +44,13 @@ public class MoveComp : MonoBehaviour
     }
     private void Move()
     {
-        Vector3 inputVec = new Vector3(_inputComponent.HorInput,0f,_inputComponent.VerInput).normalized;
+        if (GameManger.Instance.IsPlaying == false)
+        {
+            return;
+        }
+
+
+        Vector3 inputVec = new Vector3(_inputComponent.HorInput, 0f, _inputComponent.VerInput).normalized;
         Vector3 deltaMove = inputVec * _moveSpeed * Time.deltaTime;
         Vector3 nextPosition = transform.position + deltaMove;
 
@@ -47,8 +58,8 @@ public class MoveComp : MonoBehaviour
         float xGap = _xBoundValue * _playerExtents.x;
         float zGap = _zBoundValue * _playerExtents.z;
 
-        nextPosition.x = Mathf.Clamp(nextPosition.x, _minWorlaBounds.x + xGap,_maxWorlaBounds.x - xGap);
-        nextPosition.z = Mathf.Clamp(nextPosition.z, _minWorlaBounds.z + zGap,_maxWorlaBounds.z - zGap);
+        nextPosition.x = Mathf.Clamp(nextPosition.x, _minWorlaBounds.x + xGap, _maxWorlaBounds.x - xGap);
+        nextPosition.z = Mathf.Clamp(nextPosition.z, _minWorlaBounds.z + zGap, _maxWorlaBounds.z - zGap);
 
         transform.position = nextPosition;
     }
